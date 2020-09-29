@@ -1,0 +1,3 @@
+void soundEffect(){
+    printf(" \a ");
+}

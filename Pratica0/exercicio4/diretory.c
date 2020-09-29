@@ -1,0 +1,4 @@
+int openDire()
+{
+ system("dir");
+}
