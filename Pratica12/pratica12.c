@@ -4,11 +4,98 @@
 #include <string.h>
 
 #define MAX_TAM 100
+#define INFINITO 2000000000;
 
 /*
 Linhas com a expressao [CODIGO_AQUI] indicam que voce 
 precisa implementar algo na linha.
 */
+
+typedef struct Alunos
+{
+	int num;
+	char nome[20];
+	float nota1;
+	float nota2;
+} Alunos;
+
+
+void ordena_arquivo( char nome_arquivo[])
+{
+	int id_menor, posicao, inicial, cont;
+	Alunos alunos[MAX_TAM];
+	Alunos aux;
+	char *nome_ptr;
+	char buf[MAX_TAM];
+	FILE *arq, *temp;
+	arq = fopen(nome_arquivo, "r");
+	//verificar se arquivo foi aberto corretamente e retornar (return) caso negativo:
+	if(arq == NULL)
+	{
+		printf("\nErro ao abrir o arquivo.");
+		return;	
+	}
+
+	temp = fopen("temp.txt", "w");
+	
+	cont = 0;
+
+	fgets(buf, MAX_TAM, arq);
+	while(!feof(arq)) 
+	{
+		int i;
+		//ler os quatro campos do arquivo: "num", "nome", "nota1", "nota2":
+		alunos[cont].num = atoi(strtok(buf, ","));
+		nome_ptr = strtok(NULL, ",");
+		for (i = 0; nome_ptr[i] != '\0'; i++)
+		{
+			alunos[cont].nome[i] = nome_ptr[i];
+		}
+		alunos[cont].nome[i] = '\0';
+		alunos[cont].nota1 = atoi(strtok(NULL, ","));
+		alunos[cont].nota2 = atoi(strtok(NULL, ","));
+		cont++;
+		
+		//ler uma nova linha do arquivo nome_arquivo:
+		fgets(buf, MAX_TAM, arq);
+
+		inicial = 0;
+		printf("\n Ordenando ...");
+
+		while( inicial < cont )
+    	{
+        	id_menor = INFINITO;
+        	for ( int i = inicial; i < cont; i++)
+        	{
+           		if( alunos[i].num < id_menor )
+            	{
+                	id_menor = alunos[i].num;
+                	posicao = i;
+            	}
+        	}
+        	aux = alunos[inicial];
+			alunos[inicial] = alunos[posicao];
+			alunos[posicao] = aux;
+        	inicial++;
+    	}
+	}
+	
+
+	for (int i = 0; i < cont; i++)
+	{
+		fprintf(temp, "%d,%s,%4.1f,%4.1f\n", alunos[i].num, alunos[i].nome, alunos[i].nota1, alunos[i].nota2);
+	}
+	
+	fclose(arq);
+	fclose(temp);
+	
+	printf("Arquivo ordenado.");
+	//remove o arquivo antigo
+	remove(nome_arquivo);
+	//renomeia o arquivo temporario
+	rename("temp.txt", nome_arquivo);
+
+}
 
 void modificarNotas(char nome_arquivo[]) {
 	int num=-1, num_edit;
@@ -22,8 +109,11 @@ void modificarNotas(char nome_arquivo[]) {
 	//[CODIGO AQUI]
 	arq = fopen(nome_arquivo, "r");
 	//verificar se arquivo foi aberto corretamente e retornar (return) caso negativo:
-	//[CODIGO AQUI]
-
+	if(arq == NULL)
+	{
+		printf("\nErro ao abrir o arquivo.");
+		return;
+	}
 	
 	printf("\nDigite o numero do aluno a modificar: ");
 	scanf("%d", &num_edit);
@@ -31,24 +121,30 @@ void modificarNotas(char nome_arquivo[]) {
 	printf("\nProcurando...");
 	
 	//abrir um arquivo temporario "temp" (ex: temp.txt) para escrita o colocando na variavel temp:
-	//[CODIGO AQUI]
+	temp = fopen("temp.txt", "w");
 	
 	fgets(buf, MAX_TAM, arq);
 	while(!feof(arq)) {
 		//ler os quatro campos do arquivo: "num", "nome", "nota1", "nota2":
-		//[CODIGO AQUI]
+		num = atoi(strtok(buf, ","));
+		nome = strtok(NULL, ",");
+		nota1 = atoi(strtok(NULL, ","));
+		nota2 = atoi(strtok(NULL, ","));
 		
 		//verificar se "num" eh igual a "num_edit":
-		//[CODIGO AQUI]
-		
+		if( num == num_edit )
+		{
 			//se for igual, ler as novas notas (nota1 e nota2) do aluno e marcar que achou o aluno ("achei = 1"):
-			//[CODIGO AQUI]
-			
+			printf("\nDigite as duas novas notas, sem esquecer do espaços entre as mesmas: ");
+			scanf("%f %f", nota1, nota2);
+			achei = 1;
+
+		}	
 		//escrever os dados lidos do arquivo "nome_arquivo" no arquivo temporario
 		fprintf(temp, "%d,%s,%4.1f,%4.1f\n", num, nome, nota1, nota2);
 		
 		//ler uma nova linha do arquivo nome_arquivo:
-		//[CODIGO AQUI]
+		fgets(buf, MAX_TAM, arq);
 	}
 	
 	fclose(arq);
@@ -72,7 +168,7 @@ void leAluno(char nome_arquivo[], int num_alunos) {
 	arq = fopen(nome_arquivo,"a");
 	if(arq == NULL) {
 		printf("\nErro ao abrir o arquivo!");
-		getch();
+		//getch();
 		return;
 	}
 
@@ -81,8 +177,8 @@ void leAluno(char nome_arquivo[], int num_alunos) {
 	alunos ao inves de apenas 1: 
 	*/
 
-	//[CODIGO AQUI]
-	
+	for (int i = 0; i < num_alunos; i++)
+	{
 		printf("\nDigite os dados do novo aluno");
 		printf("\nNum: ");
 		scanf("%d", &num);
@@ -93,13 +189,15 @@ void leAluno(char nome_arquivo[], int num_alunos) {
 		scanf("%f", &nota1);
 		printf("\nNota2: ");
 		scanf("%f", &nota2);	
-		
+		int j = 0;
+		while(nome[j] != '\n' && nome[j] != '\0')
+			j++;
+		nome[j] = '\0';
 		fprintf(arq, "%d,%s,%4.1f,%4.1f\n", num, nome, nota1, nota2);
 
-
+	}
 	fclose(arq);
-	
-}
+} 
 
 /*
 imprime as notas dos alunos que estao gravados no arquivo
@@ -116,7 +214,7 @@ void imprimeNotas(char nome_arquivo[]) {
 	arq = fopen(nome_arquivo,"r");
 	if(arq == NULL) {
 		printf("\nErro ao abrir o arquivo!");
-		getch();
+		//getch();
 	return;
 	}
 
@@ -145,6 +243,7 @@ int main(int argc, char *argv[]) {
 	char nome_arquivo[10] = "GAAL.txt";
 	char exibe_media='N';
 	char edita_aluno = 'N';
+	char ordenaArquivo = 'N';
 	int le_alunos = 0;
 	
 	for(i=0; i<argc; i++) {
@@ -161,15 +260,23 @@ int main(int argc, char *argv[]) {
 		}
 		
 		//verifica se tem o parametro -e na lista:
-		//else if([CODIGO AQUI])
+		else if(strcmp(argv[i], "-e") == 0)
+		{
 			//caso positivo, marcar a variavel edita_aluno com 'S':
-			//[CODIGO AQUI]
-			
+			edita_aluno = 'S';
+		}	
 		//verifica se tem o parametro -l na lista:
-		//else if([CODIGO AQUI])
+		else if(strcmp(argv[i], "-l") == 0)
+		{
 			//caso positivo, transformar o parametro seguinte em inteiro a partir da funcao atoi, atribuindo ele aa variavel le_alunos:
-			//[CODIGO AQUI]
-			
+			le_alunos = atoi(argv[i+1]);
+		}
+
+		else if(strcmp(argv[i], "-o") == 0)
+		{
+			ordenaArquivo = 'S';
+		}
+
 		//para exibir a ajuda
 		else if(argc == 1 || strcmp(argv[i], "-help") == 0 || argv[i][0] == '?') {
 			printf("\nParametros do programa:");
@@ -177,7 +284,7 @@ int main(int argc, char *argv[]) {
 			printf("\n-m [S ou N] ..... Exibir media. Ex: -m S");
 			printf("\n-l [#] ..... Le informacao sobre # alunos. Ex: -l 4");				
 			printf("\n-e ..... Modifica nota de aluno.");			
-			getch();
+			//getch();
 			return 1;		
 		}
 	}
@@ -187,12 +294,23 @@ int main(int argc, char *argv[]) {
 		leAluno(nome_arquivo, le_alunos);
 
 	//se "edita_aluno" for 'S', chama o metodo para modificar notas:
-	//[CODIGO AQUI]
+	if(edita_aluno == 'S')
+	{
+		modificarNotas(nome_arquivo);
+	}
+
+
+	if(ordenaArquivo == 'S')
+	{
+		ordena_arquivo(nome_arquivo);
+	}
 
 	//se "exibe_media" for 'S', chama o metodo para imprimir notas:
-	//[CODIGO AQUI]
+	if(exibe_media == 'S')
+	{
+		imprimeNotas(nome_arquivo); 
+	}
 
-	
-getch(); 
-return 0;
+	//getch(); 
+	return 0;
 }
