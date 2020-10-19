@@ -7,7 +7,7 @@ PATH_ALLEGRO=$(FOLDER)$(FOLDER_NAME)
 LIB_ALLEGRO=\lib\liballegro-$(ALLEGRO_VERSION)-monolith-mt.a
 INCLUDE_ALLEGRO=\include
 
-all: bola.exe circles.exe passaro_andante.exe teclado.exe bouncer.exe louco.exe frogger.exe pong.exe passaro_raivoso.exe tela.exe allegro_base.exe enduro-0.exe
+all: bola.exe circles.exe invaderx.exe passaro_andante.exe teclado.exe bouncer.exe louco.exe frogger.exe pong.exe passaro_raivoso.exe tela.exe allegro_base.exe enduro-0.exe
 
 bola.exe: bola.o
 	gcc -o bola.exe bola.o $(PATH_ALLEGRO)$(LIB_ALLEGRO)
@@ -19,7 +19,13 @@ circles.exe: circles.o
 	gcc -o circles.exe circles.o $(PATH_ALLEGRO)$(LIB_ALLEGRO)
 
 circles.o: circles.c
-	gcc -I $(PATH_ALLEGRO)$(INCLUDE_ALLEGRO) -c circles.c		
+	gcc -I $(PATH_ALLEGRO)$(INCLUDE_ALLEGRO) -c circles.c	
+
+invaderx.exe: invaders.o
+	gcc -o invaderx.exe invaders.o $(PATH_ALLEGRO)$(LIB_ALLEGRO)
+
+invaders.o: invaders.c
+	gcc -I $(PATH_ALLEGRO)$(INCLUDE_ALLEGRO) -c invaders.c	
 
 passaro_andante.exe: passaro_andante.o
 	gcc -o passaro_andante.exe passaro_andante.o $(PATH_ALLEGRO)$(LIB_ALLEGRO)
@@ -87,6 +93,8 @@ clean:
 	del bola.exe
 	del circles.o 
 	del circles.exe
+	del invaders.o
+	del invaderx.exe
 	del passaro_andante.o 
 	del passaro_andante.exe
 	del passaro_raivoso.o 
